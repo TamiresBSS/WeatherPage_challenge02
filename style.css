@@ -1,0 +1,252 @@
+:root {
+    --cGrey: #f2f2f2;
+    --cBlue: #0C70F2E5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    background: var(--cGrey);
+}
+
+input {
+    font-size: 1.3em;
+    height: 3em;
+    background: var(--cGrey);
+    padding: 1em;
+    border: none;
+    border-radius: 0.7em;
+}
+
+input::placeholder {
+    padding: 1em;
+    color: #39393980;
+}
+
+nav,
+footer {
+    background-color: var(--cBlue);
+}
+
+nav,
+footer,
+nav ul li a,
+footer ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover,
+footer ul li a:hover {
+    text-shadow: 0.2em 0.2em 0.2em #1c0c629e;
+}
+
+.container {
+    margin: 3em auto;
+    width: 95em;
+}
+
+.container-sm {
+    width: 71%;
+}
+
+.bg-white {
+    background: white;
+    border-radius: 2em;
+}
+
+.x-center {
+    margin: 0 auto;
+}
+
+.y-center {
+    align-items: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.grid {
+    display: grid;
+}
+
+.grid-col {
+    grid-auto-flow: column;
+}
+
+.grid-row {
+    grid-auto-rows: auto auto 300px auto auto;
+}
+
+.col-3 {
+    grid-template-columns: 1fr 1fr 2fr;
+}
+
+.grid-custom {
+    grid-template-columns: 70% 25%;
+}
+
+.gap-1 {
+    gap: 1em;
+}
+
+.gap-3 {
+    gap: 3em;
+}
+
+.gap-5 {
+    gap: 5em;
+}
+
+.rGap-10 {
+    row-gap: 10em;
+}
+
+.just-around {
+    justify-content: space-around;
+}
+
+.just-between {
+    justify-content: space-between;
+}
+
+.just-center {
+    justify-content: center;
+}
+
+.just-right {
+    justify-content: right;
+}
+
+.pd-1 {
+    padding: 1em;
+}
+
+.pd-2 {
+    padding: 2em;
+}
+
+.pd-5 {
+    padding: 5em;
+}
+
+.mt-05 {
+    margin-top: 1.5em;
+}
+
+.mt-3 {
+    margin-top: 3em;
+}
+
+.mt-5 {
+    margin-top: 5em;
+}
+
+.mb-15 {
+    margin-bottom: 15em;
+}
+
+.m-sides-5 {
+    margin-left: 5%;
+    margin-right: 5%;
+
+}
+
+.m-sides-15 {
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+/* Text & TextArea sizes */
+.txt-sm {
+    width: 20em;
+}
+
+/* Styles */
+.no-style {
+    list-style-type: none;
+}
+
+.title,
+.subTitle,
+.navTitle {
+    font-size: 2.5em;
+    font-weight: 800;
+}
+
+label,
+.p-sm {
+    font-size: 1.3em;
+    line-height: 1.8em;
+}
+
+.weight-sm {
+    font-weight: 600;
+}
+
+.weight-bg {
+    font-weight: 800;
+}
+
+.txt-center {
+    margin: auto;
+    padding: 1.5em;
+}
+
+.btn {
+    background: var(--cBlue);
+    color: white;
+    font-size: 2em;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.4em;
+    padding: 0.2em;
+    box-shadow: 0px 6px 4px 0px #0C70F240;
+}
+
+.btn:hover {
+    background: #0a60d0e5;
+    transform: scale(1.05);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.504);
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.result-up {
+    color: white;
+    background-color: var(--cBlue);
+    height: 3.5em;
+    padding: 1em 4em;
+    border-top-left-radius: 2em;
+    border-top-right-radius: 2em;
+}
+
+
+.result-down {
+    background: white;
+    height: 3.5em;
+    padding: 1em 4em;
+    border-bottom-left-radius: 2em;
+    border-bottom-right-radius: 2em;
+}
+
+
+.result-weather {
+    border: 0.05em var(--cBlue) solid;
+    background-color: white;
+    border-radius: 1.4em;
+    text-align: center;
+    padding: 0.7em 0;
+    height: 3.5em;
+}
+
+/* Images */
+.cloud {
+    width: 20em;
+}

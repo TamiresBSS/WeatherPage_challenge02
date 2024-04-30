@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>DNC Weather</title>
+</head>
+
+<body>
+    <nav class="flex just-between y-center pd-2 weight-bg">
+        <h2 class="navTitle">DncWeather</h1>
+            <ul class="flex gap-1 just-around no-style p-mid">
+                <li><a href="#cep">Endereços</a></li>
+                <li><a href="#tempo">Previsão do Tempo</a></li>
+            </ul>
+    </nav>
+    <main class="container grid grid-row rGap-10 mb-15">
+        <section class="flex just-around y-center m-sides-5">
+            <h1 class="title txt-sm">Descubra Mais com Precisão:<br>Previsões do Tempo e endereços em
+                tempo
+                real.
+            </h1>
+            <img class="cloud" src=" img/cloud.svg" alt="cloud">
+        </section>
+        <!-- FORM -->
+        <section class="container-sm pd-5 bg-white x-center mt-5">
+            <form class="weight-sm">
+                <p class="grid">
+                    <label for="firstName">Primeiro Nome:</label>
+                    <input class="mt-05" type="text" name="firstName" placeholder="Insira seu primeiro nome">
+                </p>
+                <p class="grid mt-05">
+                    <label for="e-mail">E-mail:</label>
+                    <input class="mt-05" type="email" name="e-mail" placeholder="Insira seu e-mail">
+                </p>
+                <p class="grid mt-05">
+                    <label for="cep">Digite o CEP:</label>
+                    <input class="mt-05" type="text" name="cep" placeholder="Insira seu CEP">
+                </p>
+                <p class="mt-05">
+                    <label for="latlon">Digite a latitude e longitude para saber a previsão:</label>
+                <div class="grid grid-col gap-3 mt-05">
+                    <input type="text" id="start" aria-labelledby="latlon" placeholder="Latitude">
+                    <input type="text" id="end" aria-labelledby="latlon" placeholder="Longitude">
+                </div>
+                </p>
+                <p class="grid mt-5"><button type="submit" class="btn">Acessar</button></p>
+            </form>
+        </section>
+        <div></div>
+        <!-- VIACEP -->
+        <section id="cep" class="container-sm x-center">
+            <div class="grid grid-col gap-5 y-center just-center">
+                <h2 class="subTitle">Resultado da Pesquisa por CEP:</h2>
+                <img src="img/local.svg" alt="local icon">
+            </div>
+            <div class="result mt-3 weight-bg">
+                <ul class="grid grid-col col-3 no-style pd-1 p-sm result-up">
+                    <li>Logradouro/Nome</li>
+                    <li>Bairro/Distrito</li>
+                    <li>Localidade/UF</li>
+                    <li></li>
+                </ul>
+                <ul class="grid grid-col col-3 no-style pd-1 p-sm result-down">
+                    <li id="rua"></li>
+                    <li id="bairro"></li>
+                    <li id="uf"></li>
+                    <li></li>
+                </ul>
+            </div>
+        </section>
+        <!-- WEATHER -->
+        <section id="tempo" class="container-sm x-center">
+            <div class="flex just-center y-center gap-5 mt-5">
+                <h2 class="subTitle">Previsão do tempo na região:</h2>
+                <img src="img/cloud-shd.svg" alt="">
+            </div>
+            <div id="clima" class="result-weather p-sm weight-bg mt-3"></div>
+        </section>
+    </main>
+    <footer>
+        <ul class="flex gap-1 no-style just-right pd-2">
+            <li><a href="">Termos de Uso</a></li>|
+            <li><a href="">Política de Privacidade</a></li>
+        </ul>
+    </footer>
+    <script src="index.js"></script>
+</body>
+
+</html>

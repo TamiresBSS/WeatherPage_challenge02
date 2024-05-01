@@ -9,14 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>DNC Weather</title>
+
 </head>
 
 <body>
     <nav class="flex just-between y-center pd-2 weight-bg">
         <h2 class="navTitle">DncWeather</h1>
             <ul class="flex gap-1 just-around no-style p-mid">
-                <li><a href="#cep">Endereços</a></li>
-                <li><a href="#tempo">Previsão do Tempo</a></li>
+                <li><a href="#goCep">Endereços</a></li>
+                <li><a href="#goTempo">Previsão do Tempo</a></li>
             </ul>
     </nav>
     <main class="container grid grid-row rGap-10 mb-15">
@@ -31,30 +32,33 @@
         <section class="container-sm pd-5 bg-white x-center mt-5">
             <form class="weight-sm">
                 <p class="grid">
-                    <label for="firstName">Primeiro Nome:</label>
-                    <input class="mt-05" type="text" name="firstName" placeholder="Insira seu primeiro nome">
+                    <label for="username">Primeiro Nome:</label>
+                    <input id="username" class="mt-05" type="text" name="username"
+                        placeholder="Insira seu primeiro nome" autocomplete="given-name">
                 </p>
                 <p class="grid mt-05">
-                    <label for="e-mail">E-mail:</label>
-                    <input class="mt-05" type="email" name="e-mail" placeholder="Insira seu e-mail">
+                    <label for="email">E-mail:</label>
+                    <input id="email" class="mt-05" type="email" name="email" placeholder="Insira seu e-mail"
+                        autocomplete="email">
                 </p>
                 <p class="grid mt-05">
                     <label for="cep">Digite o CEP:</label>
-                    <input class="mt-05" type="text" name="cep" placeholder="Insira seu CEP">
+                    <input class="mt-05" type="text" name="cep" id="cep" placeholder="Insira seu CEP">
                 </p>
-                <p class="mt-05">
-                    <label for="latlon">Digite a latitude e longitude para saber a previsão:</label>
+                <p class="p-sm mt-05">
+                    Digite a latitude e longitude para saber a previsão:</p>
                 <div class="grid grid-col gap-3 mt-05">
-                    <input type="text" id="start" aria-labelledby="latlon" placeholder="Latitude">
-                    <input type="text" id="end" aria-labelledby="latlon" placeholder="Longitude">
+                    <label for="lat" class="hidden">Latitude</label>
+                    <input type="text" name="lat" id="lat" placeholder="Latitude">
+                    <label for="lon" class="hidden">Longitude</label>
+                    <input type="text" name="lon" id="lon" placeholder="Longitude">
                 </div>
-                </p>
-                <p class="grid mt-5"><button type="submit" class="btn">Acessar</button></p>
+                <p class="grid mt-5"><button type="submit" class="btn" onclick="viacep()">Acessar</button></p>
             </form>
         </section>
         <div></div>
         <!-- VIACEP -->
-        <section id="cep" class="container-sm x-center">
+        <section id="goCep" class="container-sm x-center">
             <div class="grid grid-col gap-5 y-center just-center">
                 <h2 class="subTitle">Resultado da Pesquisa por CEP:</h2>
                 <img src="img/local.svg" alt="local icon">
@@ -75,7 +79,7 @@
             </div>
         </section>
         <!-- WEATHER -->
-        <section id="tempo" class="container-sm x-center">
+        <section id="goTempo" class="container-sm x-center">
             <div class="flex just-center y-center gap-5 mt-5">
                 <h2 class="subTitle">Previsão do tempo na região:</h2>
                 <img src="img/cloud-shd.svg" alt="">
@@ -89,7 +93,7 @@
             <li><a href="">Política de Privacidade</a></li>
         </ul>
     </footer>
-    <script src="index.js"></script>
+    <!-- <script src="index.js"></script> -->
 </body>
 
 </html>

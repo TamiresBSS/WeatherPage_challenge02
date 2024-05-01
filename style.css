@@ -250,3 +250,7 @@ label,
 .cloud {
     width: 20em;
 }
+
+.hidden {
+    display: none;
+}

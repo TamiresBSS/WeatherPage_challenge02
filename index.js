@@ -1,27 +1,11 @@
 const modal = document.getElementById('myModal');
 
-const validation = {
-    "cep": {
-        "checkLenght": (number) => {
-            let check = /^[0-9]{8}$/;
-            return check.test(number);
-        }
-    },
-    "latlon": {
-        "checkLenght": (number) => {
-            let check = /^[0-9]{8}$/;
-            return check.test(number);
-        }
-    }
-};
-
-
-//  Modal Functions
+//  Modal Abrir e Fechar
 function closeModal() {
     modal.style.display = 'none';
 };
 
-function openModal(title, message) {
+function openModal(title, message = "Por favor, verifique suas informações com cuidado.") {
     const modalTitle = document.getElementById('modal-title');
     const modalMessage = document.getElementById('modal-message');
 
@@ -29,35 +13,68 @@ function openModal(title, message) {
     modalMessage.innerText = message;
     modal.style.display = 'block';
 }
-// Validating the Inputs
-// Validar os números digitados
-function validar(tipo, valor) {
-    const numType = tipo;
-    const num = valor.replace(/\D/g, '');
-    // console.log(num);
-
-    if (numType === "cep") {
-        return validation.cep.checkLenght(num);
-    } else if (numType === "latlon") {
-        return validation.cep.checkLenght(num);
+// Validando os Inputs
+function validar(num1, num2 = 0) {
+    if (!num2) {
+        if (/[a-zA-Z\s]/.test(num1)) {
+            return false;
+        } else {
+            if (/^[0-9]{8}$/.test(num1)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     } else {
-        console.log("numType não é um valor válido");
+        const lat = (num1 >= -90 && num1 <= 90);
+        const lon = (num2 >= -180 && num2 <= 180);
+        return (lat) && (lon);
     }
-
 }
-// Função ASYNC da API ViaCep
-function viaCep() {
-    const zipcode = document.getElementById('cep').value;
-    // console.log(zipcode);
-    if (!validar("cep", zipcode)) {
-        openModal("CEP Inválido!", "Por favor verifique suas informações com cuidado.");
-        return;
-        // console.log("FALSE. Deu ruim!");
-        // console.log(validar("cep", zipcode));
+
+async function consulta() {
+
+    let zipcode = document.getElementById('cep').value;
+    const userName = document.getElementById('username').value;
+    let userMail = document.getElementById('email').value;
+    const betterView = document.getElementById('goTempo');
+    // Latitude e Longitude + troca de vírgulas por pontos
+    const latitude = document.getElementById('lat').value;
+    let lat = latitude.replace(/,/g, '.');
+    const longitude = document.getElementById('lon').value;
+    let lon = longitude.replace(/,/g, '.');
+
+    const isValidCep = validar(zipcode);
+    const isValidCoord = validar(lat, lon);
+
+    if (!isValidCep && !isValidCoord) {
+        openModal("Dados inválidos!");
     }
-    else {
-        // console.log("TRUE. Deu bom, minha gente.");
-        // console.log(validar("cep", zipcode));
-        // Continue Codando Aqui !!!!!
+    else if (!isValidCep || !isValidCoord) {
+        !isValidCep ? openModal("CEP Inválido!", "Verifique se digitou os 8 dígitos.") : openModal("Coordenadas Incorretas!", "A Latitude precisa ser >= -90 e <=90.\nA Longitude precisa ser >=-180 e <=180.");
+        return;
+    } else {
+
+        try {
+
+            const consultApi = [
+                fetch(`https://viacep.com.br/ws/${zipcode}/json/`),
+                fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&forecast_days=1`)
+            ];
+
+            const responses = await Promise.all(consultApi);
+            const results = responses.map(response => response.json());
+            const [dataCep, dataTempo] = await Promise.all(results);
+
+            document.getElementById('rua').innerText = dataCep.logradouro;
+            document.getElementById('bairro').innerText = dataCep.bairro;
+            document.getElementById('uf').innerText = dataCep.uf;
+            document.getElementById('clima').innerText = dataTempo.current.temperature_2m + dataTempo.current_units.temperature_2m;
+
+        } catch (error) {
+            alert(error.message);
+        }
+
+        betterView.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
     }
 }

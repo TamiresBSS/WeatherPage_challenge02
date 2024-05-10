@@ -1,4 +1,5 @@
 const modal = document.getElementById('myModal');
+var dotsInterval;
 
 //  Modal Abrir e Fechar
 function closeModal() {
@@ -13,6 +14,30 @@ function openModal(title, message = "Por favor, verifique suas informações com
     modalMessage.innerText = message;
     modal.style.display = 'block';
 }
+// Efeito de Loading 
+function toggleDots() {
+    if (dotsInterval) {
+        clearInterval(dotsInterval);
+        dotsInterval = null;
+    } else {
+        window.dotsGoingUp = true;
+        dotsInterval = window.setInterval(function () {
+            var waits = document.querySelectorAll(".wait");
+            waits.forEach(function (wait) {
+                if (window.dotsGoingUp)
+                    wait.innerHTML += ".";
+                else {
+                    wait.innerHTML = wait.innerHTML.substring(1, wait.innerHTML.length);
+                    if (wait.innerHTML === "")
+                        window.dotsGoingUp = true;
+                }
+                if (wait.innerHTML.length > 2)
+                    window.dotsGoingUp = false;
+            });
+        }, 100);
+    }
+}
+
 // Validando os Inputs
 function validar(num1, num2 = 0) {
     if (!num2) {
@@ -34,19 +59,24 @@ function validar(num1, num2 = 0) {
 
 async function consulta() {
 
+    const betterView = document.getElementById('goTempo');
     let zipcode = document.getElementById('cep').value;
     const userName = document.getElementById('username').value;
     let userMail = document.getElementById('email').value;
-    const betterView = document.getElementById('goTempo');
-    // Latitude e Longitude + troca de vírgulas por pontos
     const latitude = document.getElementById('lat').value;
-    let lat = latitude.replace(/,/g, '.');
     const longitude = document.getElementById('lon').value;
-    let lon = longitude.replace(/,/g, '.');
 
+    if (zipcode === '' || latitude === '' || longitude === '') {
+        openModal("Aviso!", "Preencha os campos corretamente.");
+        return;
+    }
+
+    let lat = latitude.replace(/,/g, '.');
+    let lon = longitude.replace(/,/g, '.');
     const isValidCep = validar(zipcode);
     const isValidCoord = validar(lat, lon);
 
+    // Executar apenas se ambos CEP e LatLon forem digitados
     if (!isValidCep && !isValidCoord) {
         openModal("Dados inválidos!");
     }
@@ -54,6 +84,9 @@ async function consulta() {
         !isValidCep ? openModal("CEP Inválido!", "Verifique se digitou os 8 dígitos.") : openModal("Coordenadas Incorretas!", "A Latitude precisa ser >= -90 e <=90.\nA Longitude precisa ser >=-180 e <=180.");
         return;
     } else {
+        // Loading Effect ON 
+        betterView.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+        toggleDots();
 
         try {
 
@@ -66,15 +99,16 @@ async function consulta() {
             const results = responses.map(response => response.json());
             const [dataCep, dataTempo] = await Promise.all(results);
 
+            // Loading Effect OFF
+            toggleDots();
+
             document.getElementById('rua').innerText = dataCep.logradouro;
             document.getElementById('bairro').innerText = dataCep.bairro;
             document.getElementById('uf').innerText = dataCep.uf;
-            document.getElementById('clima').innerText = dataTempo.current.temperature_2m + dataTempo.current_units.temperature_2m;
+            document.getElementById('clima').innerText = "Previsão de tempo de acordo com a região: " + dataTempo.current.temperature_2m + dataTempo.current_units.temperature_2m;
 
         } catch (error) {
-            alert(error.message);
+            console.error('Error fetching data:', error);
         }
-
-        betterView.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
     }
 }

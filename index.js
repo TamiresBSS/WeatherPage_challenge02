@@ -56,7 +56,12 @@ function validar(num1, num2 = 0) {
         return (lat) && (lon);
     }
 }
-
+// Validar Emails
+function isValidEmail(email) {
+    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+// Função Principal
 async function consulta() {
 
     const betterView = document.getElementById('goTempo');
@@ -65,12 +70,17 @@ async function consulta() {
     let userMail = document.getElementById('email').value;
     const latitude = document.getElementById('lat').value;
     const longitude = document.getElementById('lon').value;
-
-    if (zipcode === '' || latitude === '' || longitude === '') {
-        openModal("Aviso!", "Preencha os campos corretamente.");
+    // Verificação dos campos digitáveis
+    if (zipcode === '' || latitude === '' || longitude === '' || userName === '' || userMail === '') {
+        openModal("Requisição Incompleta", "Por favor, preencha os campos em branco.");
         return;
+    } else {
+        if (!isValidEmail(userMail)) {
+            openModal("E-mail Inválido", "Preencha os campos corretamente.");
+            return;
+        }
     }
-
+    // Transformando vírgulas em pontos para a API open meteo
     let lat = latitude.replace(/,/g, '.');
     let lon = longitude.replace(/,/g, '.');
     const isValidCep = validar(zipcode);
@@ -78,10 +88,10 @@ async function consulta() {
 
     // Executar apenas se ambos CEP e LatLon forem digitados
     if (!isValidCep && !isValidCoord) {
-        openModal("Dados inválidos!");
+        openModal("Dados inválidos");
     }
     else if (!isValidCep || !isValidCoord) {
-        !isValidCep ? openModal("CEP Inválido!", "Verifique se digitou os 8 dígitos.") : openModal("Coordenadas Incorretas!", "A Latitude precisa ser >= -90 e <=90.\nA Longitude precisa ser >=-180 e <=180.");
+        !isValidCep ? openModal("CEP Inválido", "Verifique se digitou os 8 dígitos.") : openModal("Coordenadas Incorretas", "A Latitude precisa ser >= -90 e <=90.\nA Longitude precisa ser >=-180 e <=180.");
         return;
     } else {
         // Loading Effect ON 

@@ -99,7 +99,16 @@ async function consulta() {
         toggleDots();
 
         try {
-
+            //
+            const mailingList = {
+                Email: userName,
+                Name: userMail,
+                CEP: zipcode,
+                latitude: lat,
+                longitude: lon,
+                Created: 'x-sheetmonkey-current-date-time'
+            };
+            //
             const consultApi = [
                 fetch(`https://viacep.com.br/ws/${zipcode}/json/`),
                 fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&forecast_days=1`)
@@ -120,5 +129,16 @@ async function consulta() {
         } catch (error) {
             console.error('Error fetching data:', error);
         }
+        //
+        fetch('https://api.sheetmonkey.io/forms/vB1pUYCBvUqnSarEvAgsd6', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(mailingList),
+        }).then((result) => {
+            alert(result);
+        });
+        //
     }
 }

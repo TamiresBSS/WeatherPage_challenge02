@@ -1,12 +1,15 @@
 const modal = document.getElementById('myModal');
+const betterView = document.getElementById('goTempo');
+const formulario = document.getElementById('myForm');
 var dotsInterval;
 
-//  Modal Abrir e Fechar
+
+//  Modal : Fechar
 function closeModal() {
     modal.style.display = 'none';
 };
-
-function openModal(title, message = "Por favor, verifique suas informações com cuidado.") {
+// Modal : Abrir
+function openModal(title, message) {
     const modalTitle = document.getElementById('modal-title');
     const modalMessage = document.getElementById('modal-message');
 
@@ -31,114 +34,117 @@ function toggleDots() {
                     if (wait.innerHTML === "")
                         window.dotsGoingUp = true;
                 }
-                if (wait.innerHTML.length > 2)
+                if (wait.innerHTML.length > 3)
                     window.dotsGoingUp = false;
             });
         }, 100);
     }
 }
-
-// Validando os Inputs
-function validar(num1, num2 = 0) {
-    if (!num2) {
-        if (/[a-zA-Z\s]/.test(num1)) {
-            return false;
-        } else {
-            if (/^[0-9]{8}$/.test(num1)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    } else {
-        const lat = (num1 >= -90 && num1 <= 90);
-        const lon = (num2 >= -180 && num2 <= 180);
-        return (lat) && (lon);
-    }
-}
-// Validar Emails
-function isValidEmail(email) {
-    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-// Função Principal
-async function consulta() {
-
-    const betterView = document.getElementById('goTempo');
-    let zipcode = document.getElementById('cep').value;
-    const userName = document.getElementById('username').value;
-    let userMail = document.getElementById('email').value;
-    const latitude = document.getElementById('lat').value;
-    const longitude = document.getElementById('lon').value;
-    // Verificação dos campos digitáveis
-    if (zipcode === '' || latitude === '' || longitude === '' || userName === '' || userMail === '') {
+// Validação de Inputs
+function isValid(nameV, emailV, cepV, latV, lonV) {
+    // AllInputs
+    if (cepV === '' || latV === '' || lonV === '' || nameV === '' || emailV === '') {
         openModal("Requisição Incompleta", "Por favor, preencha os campos em branco.");
-        return;
-    } else {
-        if (!isValidEmail(userMail)) {
-            openModal("E-mail Inválido", "Preencha os campos corretamente.");
-            return;
-        }
+        return false;
     }
+    // Email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailV)) {
+        openModal("E-mail inválido", "Por favor, verifique suas informações com cuidado.");
+        console.log("Email Not valid:", emailV);
+        return false;
+    }
+    // CEP
+    if (!/^\d{8}$/.test(cepV)) {
+        openModal("CEP Inválido", "Verifique se digitou os 8 dígitos corretamente.")
+        console.log("Cep not valid", cepV);
+        return false;
+    }
+    // Latitude/Longitude
+    if (!(latV >= -90 && latV <= 90)) {
+        openModal("Coordenadas Incorretas", "A Latitude precisa ser maior ou igual a -90 e menor ou igual a 90.");
+        console.log("Lat: ", cepV, latV);
+        return false;
+    }
+    if (!(lonV >= -180 && lonV <= 180)) {
+        openModal("Coordenadas Incorretas", "A Longitude precisa ser maior ou igual a -180 e menor ou igual a 180.");
+        console.log("Lon: ", cepV, lonV);
+        return false;
+    }
+
+    return true;
+}
+
+// APIs
+async function consultaCep(zipcode) {
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`);
+        const dataCep = await response.json();
+
+        document.getElementById('rua').innerText = dataCep.logradouro;
+        document.getElementById('bairro').innerText = dataCep.bairro;
+        document.getElementById('uf').innerText = dataCep.uf;
+    } catch (error) {
+        console.error("Failed to fetch data from ViaCep: ", error);
+    }
+}
+
+async function consultaClima(lat, lon) {
+    try {
+        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&forecast_days=1`);
+        const dataClima = await response.json();
+
+        document.getElementById('clima').innerText = "Previsão de tempo de acordo com a região: " + dataClima.current.temperature_2m + dataClima.current_units.temperature_2m;
+    } catch (error) {
+        console.error("Failed to fetch data from OpenMeteo: ", error);
+    }
+}
+
+// Função Principal
+formulario.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const userName = document.getElementById('username').value;
+    const userMail = document.getElementById('email').value;
+
+    const zip = document.getElementById('cep').value;
+    const zipcode = zip.replace(/\D/g, "");
+
+    let latitude = document.getElementById('lat').value;
+    let longitude = document.getElementById('lon').value;
     // Transformando vírgulas em pontos para a API open meteo
     let lat = latitude.replace(/,/g, '.');
     let lon = longitude.replace(/,/g, '.');
-    const isValidCep = validar(zipcode);
-    const isValidCoord = validar(lat, lon);
 
-    // Executar apenas se ambos CEP e LatLon forem digitados
-    if (!isValidCep && !isValidCoord) {
-        openModal("Dados inválidos");
-    }
-    else if (!isValidCep || !isValidCoord) {
-        !isValidCep ? openModal("CEP Inválido", "Verifique se digitou os 8 dígitos.") : openModal("Coordenadas Incorretas", "A Latitude precisa ser >= -90 e <=90.\nA Longitude precisa ser >=-180 e <=180.");
-        return;
-    } else {
-        // Loading Effect ON 
+    if (isValid(userName, userMail, zipcode, lat, lon)) {
         betterView.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-        toggleDots();
-
+        // SheetMonkey
+        const mailingList = {
+            "Name": userName,
+            "Email": userMail,
+            "CEP": zipcode,
+            "latitude": lat,
+            "longitude": lon,
+            "Created": 'x-sheetmonkey-current-date-time'
+        };
         try {
-            //
-            const mailingList = {
-                Email: userName,
-                Name: userMail,
-                CEP: zipcode,
-                latitude: lat,
-                longitude: lon,
-                Created: 'x-sheetmonkey-current-date-time'
-            };
-            //
-            const consultApi = [
-                fetch(`https://viacep.com.br/ws/${zipcode}/json/`),
-                fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&forecast_days=1`)
-            ];
+            const response = fetch('https://api.sheetmonkey.io/form/764GELy5f1voFvR35oEH51', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(mailingList)
+            });
 
-            const responses = await Promise.all(consultApi);
-            const results = responses.map(response => response.json());
-            const [dataCep, dataTempo] = await Promise.all(results);
-
-            // Loading Effect OFF
-            toggleDots();
-
-            document.getElementById('rua').innerText = dataCep.logradouro;
-            document.getElementById('bairro').innerText = dataCep.bairro;
-            document.getElementById('uf').innerText = dataCep.uf;
-            document.getElementById('clima').innerText = "Previsão de tempo de acordo com a região: " + dataTempo.current.temperature_2m + dataTempo.current_units.temperature_2m;
-
+            if (!response.ok) {
+                throw new Error('Failed to fetch data.');
+            }
+            // Handle response if needed
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.log('Error:', error);
         }
-        //
-        fetch('https://api.sheetmonkey.io/forms/vB1pUYCBvUqnSarEvAgsd6', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(mailingList),
-        }).then((result) => {
-            alert(result);
-        });
-        //
+        // APIs ViaCEP & OpenMeteo 
+        consultaCep(zipcode);
+        consultaClima(lat, lon);
+
     }
-}
+});
